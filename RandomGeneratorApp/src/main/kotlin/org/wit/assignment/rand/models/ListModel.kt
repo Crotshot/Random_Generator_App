@@ -1,7 +1,7 @@
 package org.wit.assignment.rand.models
 
-data class ItemModel(
+data class ListModel(
     override var id: Int,
     override var name: String,
-    var weight: Float  = 0.0F,
+    var items: List<Int> = emptyList()
 ) : Entity

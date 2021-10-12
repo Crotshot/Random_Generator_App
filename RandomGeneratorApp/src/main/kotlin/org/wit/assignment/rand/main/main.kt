@@ -1,5 +1,5 @@
-import org.wit.assignment.rand.controllers.RandomController
+import org.wit.assignment.rand.controllers.EntityController
 
 fun main(args: Array<String>) {
-    RandomController().start()
+    EntityController().start()
 }

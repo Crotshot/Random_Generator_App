@@ -13,6 +13,14 @@ class ItemMemStore : ItemStore{
 
     val items = ArrayList<ItemModel>()
 
+    constructor(){}
+
+    constructor(items: ArrayList<ItemModel>){
+        for (item : ItemModel in items){
+            this.items.add(item)
+        }
+    }
+
     override fun findAll(): List<ItemModel> {
         return items
     }
@@ -28,18 +36,20 @@ class ItemMemStore : ItemStore{
         logAll()
     }
 
-    override fun update(item : ItemModel) {
-        var locItem = findOne(item.id!!)
-        if (locItem != null) {
-            locItem.name = item.name
-            locItem.weight = item.weight
+    override fun update(item : ItemModel?) {
+        if (item != null) {
+            var locItem = findOne(item.id)
+            if (locItem != null) {
+                locItem.name = item.name
+                locItem.weight = item.weight
+            }
         }
     }
 
     override fun delete(item : ItemModel) {
         var locItem = findOne(item.id!!)
         if (locItem != null) {
-            throw NotImplementedError() //-------------------------------------------->> Implement
+            items.remove(locItem)
         }
     }
 

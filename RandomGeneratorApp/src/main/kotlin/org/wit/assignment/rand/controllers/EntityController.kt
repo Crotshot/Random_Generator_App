@@ -23,7 +23,7 @@ class EntityController {
 
         logger.info { "Launching Placemark Console App" }
         println("Placemark Kotlin App Version 1.0")
-
+        entityView.enterToContinue()
         var input: Int
 
         do {
@@ -61,7 +61,15 @@ class EntityController {
         entityView.enterToContinue()
     }
 
-    fun addList(){}
+    fun addList(){
+        var aList = ListModel()
+
+        if(entityView.addListData(aList, items))
+            lists.create(aList)
+        else
+            logger.info("List not created")
+        entityView.enterToContinue()
+    }
 
     fun editItem(){
         entityView.listItems(items)
@@ -69,8 +77,13 @@ class EntityController {
         val anItem = searchItems(searchId)
 
         if(entityView.updateItemData(anItem)){
-                items.update(anItem)
-                entityView.showItem(anItem)
+            if(anItem == null) {
+                println("Item not updated. . .")
+                entityView.enterToContinue()
+                return;
+            }
+            items.update(anItem)
+            entityView.showItem(anItem)
         }
         else {
             println("Item not updated. . .")
@@ -78,7 +91,21 @@ class EntityController {
         entityView.enterToContinue()
     }
 
-    fun editList(){}
+    fun editList(){
+        entityView.listLists(lists)
+        var searchId = entityView.getId()
+        val aList = searchLists(searchId)
+
+        if(entityView.updateListData(aList, items)){
+            if(aList != null) lists.update(aList)
+            entityView.showList(aList)
+            entityView.listContains(aList, items)
+        }
+        else {
+            println("List not updated. . .")
+        }
+        entityView.enterToContinue()
+    }
 
     fun removeItem(){
         entityView.listItems(items)
@@ -95,8 +122,26 @@ class EntityController {
         entityView.enterToContinue()
     }
 
-    fun removeList(){} //Delete a a list
+    fun removeList(){
+        entityView.listLists(lists)
+        var searchId = entityView.getId()
+        val aList = searchLists(searchId)
+
+        if(aList != null){
+            lists.delete(aList)
+            logger.info("List removed : [ $aList ]")
+        }
+        else{
+            println("List not removed. . .")
+        }
+        entityView.enterToContinue()
+    } //Delete a a list
+
     fun generate(){}//Choice of Int number and of bool duplicates
+    //Check list to ensure all items in the list are still present -> fun checkList()
+    //Enusre the list is also longer than too when it is checked
+    //Only display valid lists for selection
+    //if a non valid list is selected after not being displayed say that the list is not valid
 
     fun searchItems(){
         if(!entityView.filterItems(items)) {
@@ -106,9 +151,8 @@ class EntityController {
         entityView.enterToContinue()
     }
 
-    fun searchItems(id : Int) : ItemModel?{
-        var foundItem = items.findOne(id)
-        return foundItem
+    fun searchItems(id: Int): ItemModel? {
+        return items.findOne(id)
     }
 
     fun searchLists(){
@@ -116,9 +160,8 @@ class EntityController {
         entityView.showList(aList)
         entityView.enterToContinue()
     }
-    fun searchLists(id : Int) : ListModel?{
-        var foundList = lists.findOne(id)
-        return foundList
+    fun searchLists(id: Int): ListModel? {
+        return lists.findOne(id)
     }
 
     fun showAllItems(){

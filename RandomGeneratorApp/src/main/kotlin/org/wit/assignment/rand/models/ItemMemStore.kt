@@ -25,9 +25,8 @@ class ItemMemStore : ItemStore{
         return items
     }
 
-    override fun findOne(id: Int) : ItemModel? {
-        var foundPlacemark: ItemModel? = items.find { i -> i.id == id }
-        return foundPlacemark
+    override fun findOne(id: Int): ItemModel? {
+        return items.find { i -> i.id == id }
     }
 
     override fun create(item : ItemModel) {
@@ -36,13 +35,11 @@ class ItemMemStore : ItemStore{
         logAll()
     }
 
-    override fun update(item : ItemModel?) {
-        if (item != null) {
-            var locItem = findOne(item.id)
-            if (locItem != null) {
-                locItem.name = item.name
-                locItem.weight = item.weight
-            }
+    override fun update(item : ItemModel) {
+        var locItem = findOne(item.id)
+        if (locItem != null) {
+            locItem.name = item.name
+            locItem.weight = item.weight
         }
     }
 
@@ -55,5 +52,16 @@ class ItemMemStore : ItemStore{
 
     internal fun logAll() {
         items.forEach { logger.info("$it") }
+    }
+
+    internal fun logOne(item : ItemModel?): Boolean{
+        if(item != null)
+            items.forEach {
+                if(item == it) {
+                    logger.info("$it")
+                    return true
+                }
+            }
+        return false;
     }
 }

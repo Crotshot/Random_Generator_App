@@ -75,7 +75,7 @@ class EntityView {
             print("Enter a new name for [ " + item.name + " ] : ")
             tempName = readLine()!!
             print("Enter a new weight for [ " + item.weight + " ] : ")
-            tempWeight = weightInput()!!//----------------------------------------------->ADD FLOAT VALIDATION
+            tempWeight = weightInput()
 
             if (!tempName.isNullOrEmpty() && tempWeight > 0F) {
                 item.name = tempName
@@ -101,41 +101,117 @@ class EntityView {
     }
 
 
-    fun addListData(list : ListModel) : Boolean {
-        //Similar to addItemData except instead of weight we have a while loop for selecting an item to add to list
-        throw NotImplementedError()
-    /*
+    fun addListData(list : ListModel, items : ItemMemStore) : Boolean {
+        if (items.items.size < 2){
+            print("Too few Items to construct an item list")
+            return false
+        }
         println()
-        print("Enter a Title : ")
-        placemark.name = readLine()!!
-        print("Enter a Description : ")
-        placemark.description = readLine()!!
+        print("Enter a name for the Item List : ")
+        while(list.name.isEmpty()){
+            list.name = readLine()!!
+        }
 
-        return placemark.title.isNotEmpty() && placemark.description.isNotEmpty()
-*/
+        print("Enter Items ID's for Item list")
+        itemSelection(list, items)
+
+        return list.name.isNotEmpty() && list.items.size >= 2
     }
 
-    fun updateListData(list : ListModel) : Boolean {
-        throw NotImplementedError()
-/*
-        var tempName: String?
-        var tempItems: List<Int>?
-
+    fun updateListData(list : ListModel?, items : ItemMemStore) : Boolean {
+        //Ask user to add at least 2 items to list
+        if (items.items.size < 2){
+            print("Too few Items available to edit the list")
+            return false
+        }
         if (list != null) {
-            print("Enter a new Title for [ " + list.name + " ] : ")
-            tempName = readLine()!!
-            /*
-            -----------------------------------------------------------------WHILE LOOP FOR ADDING ITEMS TO THE LIST
+            list.items.clear()
+            print("Enter a new name for [ " + list.name + " ] : ")
+            val tempName: String? = readLine()!!
 
-             */
-            if (!tempName.isNullOrEmpty() && !tempItems.isNullOrEmpty()) {
+            print("Enter new Items ID's for Item list")
+            itemSelection(list, items)
+
+            if (!tempName.isNullOrEmpty()) {
                 list.name = tempName
-                list.items = tempItems
                 return true
             }
         }
         return false
- */
+    }
+
+    private fun itemSelection(list : ListModel, items : ItemMemStore){
+        items.logAll()
+        enterToContinue()
+        var itemID : Int
+        while(true) {
+            println("Add the first item to the list by ID")
+            itemID = itemInput()
+            if (items.findOne(itemID) != null) {
+                list.items.add(itemID)
+                break
+            }
+            else{
+                println("Please add a valid item")
+            }
+        }
+        while(true) {
+            println("Add the second item to the list by ID")
+            itemID = itemInput()
+            if (items.findOne(itemID) != null) {
+                list.items.add(itemID)
+                break
+            }
+            else{
+                println("Please add a valid item")
+            }
+        }
+        var input : String
+        while(true) {
+            println("Would you like to put additional items in the list? (y/n)")
+            input = readLine()!!
+            if (!input.uppercase().contains("Y"))
+                return
+            println("Add another item to the list by ID")
+            itemID = itemInput()
+            if (items.findOne(itemID) != null) {
+                list.items.add(itemID)
+            }
+            else{
+                if(itemID == -2)
+                    break
+                println("Please add a valid item")
+            }
+        }
+    }
+
+    private fun itemInput(): Int {
+        var input = readLine()!!
+        return if (input.toIntOrNull() != null && !input.isEmpty())
+            if (input.toInt() > 0)
+                input.toInt()
+            else
+                if(input.toInt() == 0)
+                    -1
+                else
+                    -1
+        else
+            -1
+    }
+
+    fun listContains(list : ListModel?, items: ItemMemStore){
+        if(list != null)
+            for(item : Int in list.items){
+                if(!items.logOne(items.findOne(item))){
+                    cleanList(list, items)
+                }
+            }
+    }
+
+    fun cleanList(list : ListModel, items : ItemMemStore){
+        //Clear lists of all items that have been deleted
+        //Called when items are deleted
+
     }
 
     fun getId() : Int {

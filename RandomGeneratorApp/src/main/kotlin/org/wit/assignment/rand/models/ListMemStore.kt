@@ -17,9 +17,8 @@ class ListMemStore : ListStore{
         return lists
     }
 
-    override fun findOne(id: Int) : ListModel? {
-        var foundPlacemark: ListModel? = lists.find { i -> i.id == id }
-        return foundPlacemark
+    override fun findOne(id: Int): ListModel? {
+        return lists.find { i -> i.id == id }
     }
 
     override fun create(list : ListModel) {
@@ -29,17 +28,20 @@ class ListMemStore : ListStore{
     }
 
     override fun update(list : ListModel) {
-        var loclist = findOne(list.id!!)
+        var loclist = findOne(list.id)
         if (loclist != null) {
             loclist.name = list.name
-            loclist.items = list.items
+            loclist.items.clear()
+            for(item : Int in list.items){
+                loclist.items.add(item)
+            }
         }
     }
 
     override fun delete(list : ListModel) {
-        var loclist = findOne(list.id!!)
+        var loclist = findOne(list.id)
         if (loclist != null) {
-            throw NotImplementedError() //-------------------------------------------->> Implement
+            lists.remove(loclist)
         }
     }
 

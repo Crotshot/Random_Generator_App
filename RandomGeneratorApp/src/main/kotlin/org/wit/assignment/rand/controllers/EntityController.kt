@@ -97,7 +97,10 @@ class EntityController {
         val aList = searchLists(searchId)
 
         if(entityView.updateListData(aList, items)){
-            if(aList != null) lists.update(aList)
+            if(aList != null) {
+                lists.update(aList)
+                entityView.cleanListOfAll(aList, items)
+            }
             entityView.showList(aList)
             entityView.listContains(aList, items)
         }
@@ -114,6 +117,7 @@ class EntityController {
 
         if(anItem != null){
             items.delete(anItem)
+            entityView.cleanAllLists(lists, anItem)
             logger.info("Item removed : [ $anItem ]")
         }
         else{
@@ -137,7 +141,9 @@ class EntityController {
         entityView.enterToContinue()
     } //Delete a a list
 
-    fun generate(){}//Choice of Int number and of bool duplicates
+    fun generate(){
+        entityView.cleanAllOfAll(lists, items)
+    }//Choice of Int number and of bool duplicates
     //Check list to ensure all items in the list are still present -> fun checkList()
     //Enusre the list is also longer than too when it is checked
     //Only display valid lists for selection
@@ -156,7 +162,7 @@ class EntityController {
     }
 
     fun searchLists(){
-        val aList = searchLists(entityView.getId())!!
+        val aList: ListModel = searchLists(entityView.getId()) ?: return
         entityView.showList(aList)
         entityView.enterToContinue()
     }
@@ -165,10 +171,12 @@ class EntityController {
     }
 
     fun showAllItems(){
+
         entityView.listItems(items)
         entityView.enterToContinue()
     }
     fun showAllLists(){
+        entityView.cleanAllOfAll(lists, items)
         entityView.listLists(lists)
         entityView.enterToContinue()
     }

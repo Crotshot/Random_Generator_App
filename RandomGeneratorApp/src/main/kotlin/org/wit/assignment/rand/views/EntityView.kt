@@ -203,15 +203,37 @@ class EntityView {
         if(list != null)
             for(item : Int in list.items){
                 if(!items.logOne(items.findOne(item))){
-                    cleanList(list, items)
+                    cleanListOfAll(list, items)
                 }
             }
     }
 
-    fun cleanList(list : ListModel, items : ItemMemStore){
-        //Clear lists of all items that have been deleted
+    fun cleanAllLists(lists : ListMemStore, item : ItemModel){        //-> Removes a single item from all lists
         //Called when items are deleted
+        println("Cleaning all lists, of removed item")
+        for(list in lists.lists){
+            for(id in list.items){
+                if(item.id == id){
+                    list.items.remove(id)
+                }
+            }
+        }
+    }
 
+    fun cleanListOfAll(list : ListModel, items : ItemMemStore){          //-> Removes all deleted items from a list
+        //Clear a list of all items that have been deleted
+        for(item : Int in list.items){
+            //findOne and if null remove item from list
+            if(items.findOne(item) == null){
+                list.items.remove(item)
+            }
+        }
+    }
+
+    fun cleanAllOfAll(lists : ListMemStore, items : ItemMemStore){
+        for(list in lists.lists){
+            cleanListOfAll(list, items)
+        }
     }
 
     fun getId() : Int {
@@ -257,7 +279,7 @@ class EntityView {
                 nameInput = readLine()!!
                 if(nameInput.isNotEmpty()){
                     filteredNames.add(nameInput)
-                    println("Would you like to add another names to the filter (y/n): ")
+                    println("Would you like to add another name to the filter (y/n): ")
                     input = readLine()!!
                     if (input.uppercase().contains("N"))
                         break
@@ -323,7 +345,13 @@ class EntityView {
 
             var temp = ItemMemStore(itemsToDisplay)
             temp.logAll()
+
+            throw NotImplementedError("Add option to add filtered items to a new list")//--------------------------------------------------------------------------
         }
-        return true;
+        return true
+    }
+
+    fun filterLists(listMemStore: ListMemStore) : Boolean{
+        return true
     }
 }

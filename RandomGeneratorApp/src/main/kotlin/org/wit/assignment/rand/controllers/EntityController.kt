@@ -150,7 +150,7 @@ class EntityController {
     //if a non valid list is selected after not being displayed say that the list is not valid
 
     fun searchItems(){
-        if(!entityView.filterItems(items)) {
+        if(!entityView.filterItems(items,lists)) {
             val anItem = searchItems(entityView.getId())
             entityView.showItem(anItem)
         }

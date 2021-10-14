@@ -13,8 +13,8 @@ class EntityView {
         println("2:     Create a List")
         println("3:     Edit an Item")
         println("4:     Edit a List")
-        println("5:     Search for Item")
-        println("6:     Search for List")
+        println("5:     Search/Filter for Item(s)")
+        println("6:     Search/Filter for List(s)")
         println("7:     Remove an item")
         println("8:     Remove a list")
         println("9:     Random selection")
@@ -188,13 +188,10 @@ class EntityView {
     private fun itemInput(): Int {
         var input = readLine()!!
         return if (input.toIntOrNull() != null && !input.isEmpty())
-            if (input.toInt() > 0)
+            if (input.toInt() >= 0)
                 input.toInt()
             else
-                if(input.toInt() == 0)
-                    -1
-                else
-                    -1
+                -1
         else
             -1
     }
@@ -260,7 +257,7 @@ class EntityView {
         readLine()
     }
 
-    fun filterItems(itemMemStore : ItemMemStore) : Boolean {
+    fun filterItems(itemMemStore : ItemMemStore, listMemStore: ListMemStore) : Boolean {
         println("Would you like to filter search? (y/n) : ")
         var input : String
         input = readLine()!!
@@ -315,6 +312,7 @@ class EntityView {
             }
             var temp = ItemMemStore(itemsToDisplay)
             temp.logAll()
+            filteredItemsToList(temp,listMemStore)
         }
         else{
             println("Enter weight to filter (Example 10.025): ")
@@ -344,14 +342,40 @@ class EntityView {
             }
 
             var temp = ItemMemStore(itemsToDisplay)
-            temp.logAll()
 
-            throw NotImplementedError("Add option to add filtered items to a new list")//--------------------------------------------------------------------------
+            if (temp.items.size == 0)
+                return true
+
+            temp.logAll()
+            filteredItemsToList(temp,listMemStore)
         }
         return true
     }
 
+    fun filteredItemsToList(itemsToMakeListFrom : ItemMemStore, listMemStore: ListMemStore){
+        if(itemsToMakeListFrom.items.size == 0)
+            return
+        println("Would you like to make a list from filtered search? (y/n) : ")
+        var input : String = readLine()!!
+        if (!input.uppercase().contains("Y"))
+            return
+        val tempList = ListModel()
+        println()
+        print("Enter a name for the new List : ")
+        tempList.name = readLine()!!
+        for (item in itemsToMakeListFrom.items){
+            tempList.items.add(item.id)
+        }
+        listMemStore.create(tempList)
+    }
+
     fun filterLists(listMemStore: ListMemStore) : Boolean{
         return true
+        //Filter by name or items
+
+        //Name is fairly similar to filtering items by name
+        //Filtering items will be done with id's and item name, so also similar to previous filter
+
+        //When filtered and more than one list occurs ask user do they want to merge lists
     }
 }

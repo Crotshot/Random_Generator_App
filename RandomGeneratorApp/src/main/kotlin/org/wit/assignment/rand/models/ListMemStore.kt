@@ -1,4 +1,5 @@
 import mu.KotlinLogging
+import org.wit.assignment.rand.models.ItemModel
 import org.wit.assignment.rand.models.ListModel
 import org.wit.assignment.rand.models.ListStore
 
@@ -12,6 +13,14 @@ internal fun getListId(): Int {
 class ListMemStore : ListStore{
 
     val lists = ArrayList<ListModel>()
+
+    constructor(){}
+
+    constructor(lists: ArrayList<ListModel>){
+        for (list : ListModel in lists){
+            this.lists.add(list)
+        }
+    }
 
     override fun findAll(): List<ListModel> {
         return lists
@@ -47,5 +56,16 @@ class ListMemStore : ListStore{
 
     internal fun logAll() {
         lists.forEach { logger.info("$it") }
+    }
+
+    internal fun logOne(list : ListModel?): Boolean{
+        if(list != null)
+            lists.forEach {
+                if(list == it) {
+                    logger.info("$it")
+                    return true
+                }
+            }
+        return false;
     }
 }

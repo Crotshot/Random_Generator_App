@@ -143,11 +143,8 @@ class EntityController {
 
     fun generate(){
         entityView.cleanAllOfAll(lists, items)
-    }//Choice of Int number and of bool duplicates
-    //Check list to ensure all items in the list are still present -> fun checkList()
-    //Enusre the list is also longer than too when it is checked
-    //Only display valid lists for selection
-    //if a non valid list is selected after not being displayed say that the list is not valid
+        entityView.Randomgen(lists, items)
+    }
 
     fun searchItems(){
         if(!entityView.filterItems(items,lists)) {
@@ -162,8 +159,10 @@ class EntityController {
     }
 
     fun searchLists(){
-        val aList: ListModel = searchLists(entityView.getId()) ?: return
-        entityView.showList(aList)
+        if(!entityView.filterLists(lists)) {
+            val aList: ListModel = searchLists(entityView.getId()) ?: return
+            entityView.showList(aList)
+        }
         entityView.enterToContinue()
     }
     fun searchLists(id: Int): ListModel? {
@@ -196,230 +195,28 @@ class EntityController {
         items.create(ItemModel(name = "Heads", weight = 10F))
         items.create(ItemModel(name = "Tails", weight = 10F))
         //*/
-        ///*//Fair Dice -> Each side has an equal weight
-        items.create(ItemModel(name = "One", weight = 1F))
-        items.create(ItemModel(name = "Two", weight = 1F))
-        items.create(ItemModel(name = "Three", weight = 1F))
-        items.create(ItemModel(name = "Four", weight = 1F))
-        //items.create(ItemModel(name = "Four", weight = 3F)) ->If used instead dice becomes loaded as Side Four is 3 times more likely to occur
-        items.create(ItemModel(name = "Five", weight = 1F))
-        items.create(ItemModel(name = "Six", weight = 1F))
-        //*/
 
-        // /* //Coin toss
-        items.create(ItemModel(name = "Heads", weight = 10F))
-        items.create(ItemModel(name = "Tails", weight = 10F))
-        //*/
-        ///*//Fair Dice -> Each side has an equal weight
-        items.create(ItemModel(name = "One", weight = 1F))
-        items.create(ItemModel(name = "Two", weight = 1F))
-        items.create(ItemModel(name = "Three", weight = 1F))
-        items.create(ItemModel(name = "Four", weight = 1F))
-        //items.create(ItemModel(name = "Four", weight = 3F)) ->If used instead dice becomes loaded as Side Four is 3 times more likely to occur
-        items.create(ItemModel(name = "Five", weight = 1F))
-        items.create(ItemModel(name = "Six", weight = 1F))
-        //*/
-
-        // /* //Coin toss
-        items.create(ItemModel(name = "Heads", weight = 10F))
-        items.create(ItemModel(name = "Tails", weight = 10F))
-        //*/
-        ///*//Fair Dice -> Each side has an equal weight
-        items.create(ItemModel(name = "One", weight = 1F))
-        items.create(ItemModel(name = "Two", weight = 1F))
-        items.create(ItemModel(name = "Three", weight = 1F))
-        items.create(ItemModel(name = "Four", weight = 1F))
-        //items.create(ItemModel(name = "Four", weight = 3F)) ->If used instead dice becomes loaded as Side Four is 3 times more likely to occur
-        items.create(ItemModel(name = "Five", weight = 1F))
-        items.create(ItemModel(name = "Six", weight = 1F))
-        //*/
-
-        // /* //Coin toss
-        items.create(ItemModel(name = "Heads", weight = 10F))
-        items.create(ItemModel(name = "Tails", weight = 10F))
-        //*/
-        ///*//Fair Dice -> Each side has an equal weight
-        items.create(ItemModel(name = "One", weight = 1F))
-        items.create(ItemModel(name = "Two", weight = 1F))
-        items.create(ItemModel(name = "Three", weight = 1F))
-        items.create(ItemModel(name = "Four", weight = 1F))
-        //items.create(ItemModel(name = "Four", weight = 3F)) ->If used instead dice becomes loaded as Side Four is 3 times more likely to occur
-        items.create(ItemModel(name = "Five", weight = 1F))
-        items.create(ItemModel(name = "Six", weight = 1F))
-        //*/
-
-        // /* //Coin toss
-        items.create(ItemModel(name = "Heads", weight = 10F))
-        items.create(ItemModel(name = "Tails", weight = 10F))
-        //*/
-        ///*//Fair Dice -> Each side has an equal weight
-        items.create(ItemModel(name = "One", weight = 1F))
-        items.create(ItemModel(name = "Two", weight = 1F))
-        items.create(ItemModel(name = "Three", weight = 1F))
-        items.create(ItemModel(name = "Four", weight = 1F))
-        //items.create(ItemModel(name = "Four", weight = 3F)) ->If used instead dice becomes loaded as Side Four is 3 times more likely to occur
-        items.create(ItemModel(name = "Five", weight = 1F))
-        items.create(ItemModel(name = "Six", weight = 1F))
-        //*/
-
-        // /* //Coin toss
-        items.create(ItemModel(name = "Heads", weight = 10F))
-        items.create(ItemModel(name = "Tails", weight = 10F))
-        //*/
-        ///*//Fair Dice -> Each side has an equal weight
-        items.create(ItemModel(name = "One", weight = 1F))
-        items.create(ItemModel(name = "Two", weight = 1F))
-        items.create(ItemModel(name = "Three", weight = 1F))
-        items.create(ItemModel(name = "Four", weight = 1F))
-        //items.create(ItemModel(name = "Four", weight = 3F)) ->If used instead dice becomes loaded as Side Four is 3 times more likely to occur
-        items.create(ItemModel(name = "Five", weight = 1F))
-        items.create(ItemModel(name = "Six", weight = 1F))
-        //*/
-
-        // /* //Coin toss
-        items.create(ItemModel(name = "Heads", weight = 10F))
-        items.create(ItemModel(name = "Tails", weight = 10F))
-        //*/
-        ///*//Fair Dice -> Each side has an equal weight
-        items.create(ItemModel(name = "One", weight = 1F))
-        items.create(ItemModel(name = "Two", weight = 1F))
-        items.create(ItemModel(name = "Three", weight = 1F))
-        items.create(ItemModel(name = "Four", weight = 1F))
-        //items.create(ItemModel(name = "Four", weight = 3F)) ->If used instead dice becomes loaded as Side Four is 3 times more likely to occur
-        items.create(ItemModel(name = "Five", weight = 1F))
-        items.create(ItemModel(name = "Six", weight = 1F))
-        //*/
-
-        // /* //Coin toss
-        items.create(ItemModel(name = "Heads", weight = 10F))
-        items.create(ItemModel(name = "Tails", weight = 10F))
-        //*/
-        ///*//Fair Dice -> Each side has an equal weight
-        items.create(ItemModel(name = "One", weight = 1F))
-        items.create(ItemModel(name = "Two", weight = 1F))
-        items.create(ItemModel(name = "Three", weight = 1F))
-        items.create(ItemModel(name = "Four", weight = 1F))
-        //items.create(ItemModel(name = "Four", weight = 3F)) ->If used instead dice becomes loaded as Side Four is 3 times more likely to occur
-        items.create(ItemModel(name = "Five", weight = 1F))
-        items.create(ItemModel(name = "Six", weight = 1F))
-        //*/
-
-        // /* //Coin toss
-        items.create(ItemModel(name = "Heads", weight = 10F))
-        items.create(ItemModel(name = "Tails", weight = 10F))
-        //*/
-        ///*//Fair Dice -> Each side has an equal weight
-        items.create(ItemModel(name = "One", weight = 1F))
-        items.create(ItemModel(name = "Two", weight = 1F))
-        items.create(ItemModel(name = "Three", weight = 1F))
-        items.create(ItemModel(name = "Four", weight = 1F))
-        //items.create(ItemModel(name = "Four", weight = 3F)) ->If used instead dice becomes loaded as Side Four is 3 times more likely to occur
-        items.create(ItemModel(name = "Five", weight = 1F))
-        items.create(ItemModel(name = "Six", weight = 1F))
-        //*/
-
-        // /* //Coin toss
-        items.create(ItemModel(name = "Heads", weight = 10F))
-        items.create(ItemModel(name = "Tails", weight = 10F))
-        //*/
-        ///*//Fair Dice -> Each side has an equal weight
-        items.create(ItemModel(name = "One", weight = 1F))
-        items.create(ItemModel(name = "Two", weight = 1F))
-        items.create(ItemModel(name = "Three", weight = 1F))
-        items.create(ItemModel(name = "Four", weight = 1F))
-        //items.create(ItemModel(name = "Four", weight = 3F)) ->If used instead dice becomes loaded as Side Four is 3 times more likely to occur
-        items.create(ItemModel(name = "Five", weight = 1F))
-        items.create(ItemModel(name = "Six", weight = 1F))
-        //*/
-
-        // /* //Coin toss
-        items.create(ItemModel(name = "Heads", weight = 10F))
-        items.create(ItemModel(name = "Tails", weight = 10F))
-        //*/
-        ///*//Fair Dice -> Each side has an equal weight
-        items.create(ItemModel(name = "One", weight = 1F))
-        items.create(ItemModel(name = "Two", weight = 1F))
-        items.create(ItemModel(name = "Three", weight = 1F))
-        items.create(ItemModel(name = "Four", weight = 1F))
-        //items.create(ItemModel(name = "Four", weight = 3F)) ->If used instead dice becomes loaded as Side Four is 3 times more likely to occur
-        items.create(ItemModel(name = "Five", weight = 1F))
-        items.create(ItemModel(name = "Six", weight = 1F))
-        //*/
-
-        // /* //Coin toss
-        items.create(ItemModel(name = "Heads", weight = 10F))
-        items.create(ItemModel(name = "Tails", weight = 10F))
-        //*/
-        ///*//Fair Dice -> Each side has an equal weight
-        items.create(ItemModel(name = "One", weight = 1F))
-        items.create(ItemModel(name = "Two", weight = 1F))
-        items.create(ItemModel(name = "Three", weight = 1F))
-        items.create(ItemModel(name = "Four", weight = 1F))
-        //items.create(ItemModel(name = "Four", weight = 3F)) ->If used instead dice becomes loaded as Side Four is 3 times more likely to occur
-        items.create(ItemModel(name = "Five", weight = 1F))
-        items.create(ItemModel(name = "Six", weight = 1F))
-        //*/
-
-        // /* //Coin toss
-        items.create(ItemModel(name = "Heads", weight = 10F))
-        items.create(ItemModel(name = "Tails", weight = 10F))
-        //*/
-        ///*//Fair Dice -> Each side has an equal weight
-        items.create(ItemModel(name = "One", weight = 1F))
-        items.create(ItemModel(name = "Two", weight = 1F))
-        items.create(ItemModel(name = "Three", weight = 1F))
-        items.create(ItemModel(name = "Four", weight = 1F))
-        //items.create(ItemModel(name = "Four", weight = 3F)) ->If used instead dice becomes loaded as Side Four is 3 times more likely to occur
-        items.create(ItemModel(name = "Five", weight = 1F))
-        items.create(ItemModel(name = "Six", weight = 1F))
-        //*/
-
-        // /* //Coin toss
-        items.create(ItemModel(name = "Heads", weight = 10F))
-        items.create(ItemModel(name = "Tails", weight = 10F))
-        //*/
-        ///*//Fair Dice -> Each side has an equal weight
-        items.create(ItemModel(name = "One", weight = 1F))
-        items.create(ItemModel(name = "Two", weight = 1F))
-        items.create(ItemModel(name = "Three", weight = 1F))
-        items.create(ItemModel(name = "Four", weight = 1F))
-        //items.create(ItemModel(name = "Four", weight = 3F)) ->If used instead dice becomes loaded as Side Four is 3 times more likely to occur
-        items.create(ItemModel(name = "Five", weight = 1F))
-        items.create(ItemModel(name = "Six", weight = 1F))
-        //*/
-
-        // /* //Coin toss
-        items.create(ItemModel(name = "Heads", weight = 10F))
-        items.create(ItemModel(name = "Tails", weight = 10F))
-        //*/
-        ///*//Fair Dice -> Each side has an equal weight
-        items.create(ItemModel(name = "One", weight = 1F))
-        items.create(ItemModel(name = "Two", weight = 1F))
-        items.create(ItemModel(name = "Three", weight = 1F))
-        items.create(ItemModel(name = "Four", weight = 1F))
-        //items.create(ItemModel(name = "Four", weight = 3F)) ->If used instead dice becomes loaded as Side Four is 3 times more likely to occur
-        items.create(ItemModel(name = "Five", weight = 1F))
-        items.create(ItemModel(name = "Six", weight = 1F))
-        //*/
-
-        // /* //Coin toss
-        items.create(ItemModel(name = "Heads", weight = 10F))
-        items.create(ItemModel(name = "Tails", weight = 10F))
-        //*/
-        ///*//Fair Dice -> Each side has an equal weight
-        items.create(ItemModel(name = "One", weight = 10F))
-        items.create(ItemModel(name = "Two", weight = 10F))
-        items.create(ItemModel(name = "Three", weight = 10F))
-        items.create(ItemModel(name = "Four", weight = 10F))
-        //items.create(ItemModel(name = "Four", weight = 3F)) ->If used instead dice becomes loaded as Side Four is 3 times more likely to occur
-        items.create(ItemModel(name = "Five", weight = 10F))
-        items.create(ItemModel(name = "Six", weight = 10F))
-        //*/
-
-        // /* //Coin toss
-        items.create(ItemModel(name = "Heads", weight = 100F))
-        items.create(ItemModel(name = "Tails", weight = 100F))
-        //*/
-
+        var itemIDArrayList1 : ArrayList<Int> = ArrayList()
+        itemIDArrayList1.add(6)
+        itemIDArrayList1.add(7)
+        lists.create((ListModel(name = "Coin", items = itemIDArrayList1)))
+        var itemIDArrayList2 : ArrayList<Int> = ArrayList()
+        itemIDArrayList2.add(0)
+        itemIDArrayList2.add(1)
+        itemIDArrayList2.add(2)
+        itemIDArrayList2.add(3)
+        itemIDArrayList2.add(4)
+        itemIDArrayList2.add(5)
+        lists.create(ListModel(name = "Die", items = itemIDArrayList2))
+        var itemIDArrayList : ArrayList<Int> = ArrayList()
+        itemIDArrayList.add(0)
+        itemIDArrayList.add(1)
+        itemIDArrayList.add(2)
+        itemIDArrayList.add(3)
+        itemIDArrayList.add(4)
+        itemIDArrayList.add(5)
+        itemIDArrayList.add(6)
+        itemIDArrayList.add(7)
+        lists.create((ListModel(name = "MixedBag", items = itemIDArrayList)))
     }
 }

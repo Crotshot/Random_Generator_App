@@ -1,5 +1,6 @@
 import org.wit.assignment.rand.models.ItemModel
 import org.wit.assignment.rand.models.ListModel
+import kotlin.random.Random
 
 class EntityView {
 
@@ -23,7 +24,7 @@ class EntityView {
         println("-99:   Add dummy data(FOR TESTING)")
         println("-1:    Exiting App")
         println()
-        print("Enter Option : ")
+        println("Enter Option : ")
         input = readLine()!!
         option = if (input.toIntOrNull() != null && !input.isEmpty()) input.toInt() else -9
         return option
@@ -60,9 +61,9 @@ class EntityView {
     fun addItemData(item : ItemModel) : Boolean {
         //Create an item with a name and weight, auto assign id using a while loop, starting at zero and incrementing up
         println()
-        print("Enter a name for the Item : ")
+        println("Enter a name for the Item : ")
         item.name = readLine()!!
-        print("Enter " + item.name + "'s weight : ")
+        println("Enter " + item.name + "'s weight : ")
         item.weight = weightInput()
         return item.name.isNotEmpty() && item.weight > 0F
     }
@@ -72,9 +73,9 @@ class EntityView {
         var tempWeight: Float?
 
         if (item != null) {
-            print("Enter a new name for [ " + item.name + " ] : ")
+            println("Enter a new name for [ " + item.name + " ] : ")
             tempName = readLine()!!
-            print("Enter a new weight for [ " + item.weight + " ] : ")
+            println("Enter a new weight for [ " + item.weight + " ] : ")
             tempWeight = weightInput()
 
             if (!tempName.isNullOrEmpty() && tempWeight > 0F) {
@@ -103,16 +104,16 @@ class EntityView {
 
     fun addListData(list : ListModel, items : ItemMemStore) : Boolean {
         if (items.items.size < 2){
-            print("Too few Items to construct an item list")
+            println("Too few Items to construct an item list")
             return false
         }
         println()
-        print("Enter a name for the Item List : ")
+        println("Enter a name for the Item List : ")
         while(list.name.isEmpty()){
             list.name = readLine()!!
         }
 
-        print("Enter Items ID's for Item list")
+        println("Enter Items ID's for Item list")
         itemSelection(list, items)
 
         return list.name.isNotEmpty() && list.items.size >= 2
@@ -121,15 +122,15 @@ class EntityView {
     fun updateListData(list : ListModel?, items : ItemMemStore) : Boolean {
         //Ask user to add at least 2 items to list
         if (items.items.size < 2){
-            print("Too few Items available to edit the list")
+            println("Too few Items available to edit the list")
             return false
         }
         if (list != null) {
             list.items.clear()
-            print("Enter a new name for [ " + list.name + " ] : ")
+            println("Enter a new name for [ " + list.name + " ] : ")
             val tempName: String? = readLine()!!
 
-            print("Enter new Items ID's for Item list")
+            println("Enter new Items ID's for Item list")
             itemSelection(list, items)
 
             if (!tempName.isNullOrEmpty()) {
@@ -236,19 +237,12 @@ class EntityView {
     fun getId() : Int {
         var strId : String?
         var searchId : Int
-        println("Enter id to Search/Update : ")
+        println("Enter id to Search : ")
         strId = readLine()!!
         searchId = if (strId.toLongOrNull() != null && !strId.isEmpty())  strId.toInt()
         else
             -999999
         return searchId
-    }
-
-    fun generateList(list: ListModel, duplicates: Boolean) {
-        if (list == null) {
-            println("Not a valid list. . .")
-            return
-        }
     }
 
     //Method created to stop the application displaying the menu straight after editing data
@@ -270,32 +264,8 @@ class EntityView {
 
         if(input.uppercase().contains("N")){
             println("Enter name to filter (Case Sensitive): ")
-            var nameInput : String
             val filteredNames : ArrayList<String> = ArrayList()
-            while(true){
-                nameInput = readLine()!!
-                if(nameInput.isNotEmpty()){
-                    filteredNames.add(nameInput)
-                    println("Would you like to add another name to the filter (y/n): ")
-                    input = readLine()!!
-                    if (input.uppercase().contains("N"))
-                        break
-                    println("Enter additional name to filter (Case Sensitive):")
-                }
-                else
-                    println("Nothing entered, please enter a non empty value")
-            }
-
-            println("Would you like the filter to include or exclude filtered names? (i/e): ")
-            input = readLine()!!
-            var include = true;
-            if(input.uppercase().contains("E")){
-                println("Filtered to exclude $filteredNames")
-                include = false;
-            }
-            else
-                println("Filtered to include $filteredNames")
-
+            var include = nameFilter(filteredNames);
             val itemsToDisplay = ArrayList<ItemModel>()
 
             for (item : ItemModel in itemMemStore.items){
@@ -361,7 +331,7 @@ class EntityView {
             return
         val tempList = ListModel()
         println()
-        print("Enter a name for the new List : ")
+        println("Enter a name for the new List : ")
         tempList.name = readLine()!!
         for (item in itemsToMakeListFrom.items){
             tempList.items.add(item.id)
@@ -370,12 +340,275 @@ class EntityView {
     }
 
     fun filterLists(listMemStore: ListMemStore) : Boolean{
+
+        println("Would you like to filter search? (y/n) : ")
+        var input : String
+        input = readLine()!!
+        if (!input.uppercase().contains("Y"))
+            return false
+        println("Would you like to filter by names or item id's or by number of items? (n/d/i) : ")
+        input = readLine()!!
+        if (!input.uppercase().contains("N") && !input.uppercase().contains("D") && !input.uppercase().contains("I"))
+            return false
+
+        //Filtering by name
+        if(input.uppercase().contains("N")){
+            println("Enter name to filter (Case Sensitive): ")
+            val filteredNames : ArrayList<String> = ArrayList()
+            var include = nameFilter(filteredNames)
+
+            val listsToDisplay = ArrayList<ListModel>()
+
+            for (list : ListModel in listMemStore.lists){
+                var found = false
+                for(i in 0 until filteredNames.size){
+                    if (list.name.contains(filteredNames[i])) {
+                        found = true
+                        break
+                    }
+                }
+                if (found == include) {
+                    listsToDisplay.add(list)
+                }
+            }
+            mergeFilteredLists(ListMemStore(listsToDisplay),listMemStore)
+        }
+        //Filtering by an item ID
+        else if(input.uppercase().contains("D")) {
+            val filteredIDs: ArrayList<Int> = ArrayList()
+            while(true){
+                println("Enter id to filter (eg 0, 1, 95, 43): ")
+                input = readLine()!!
+                if (input.toIntOrNull() != null) {
+                    filteredIDs.add(input.toInt())
+                }
+                else {
+                    if (filteredIDs.size == 0) {
+                        println("No value entered, please filter for at one ID")
+                    }
+                    else{
+                        println("No value entered, exiting")
+                        break
+                    }
+                }
+            }
+
+            println("Would you like the filter to include or exclude these ID's (i/e): ")
+            input = readLine()!!
+            var include = input.uppercase().contains("I")
+
+            val listsToDisplay = ArrayList<ListModel>()
+            var contains = false
+            for(list : ListModel in listMemStore.lists) {
+                contains = true
+                for(ID in filteredIDs) {
+                    if(!list.items.contains(ID)){
+                        contains = false
+                        break
+                    }
+                }
+                if(contains == include)
+                    listsToDisplay.add(list)
+            }
+
+            if(listsToDisplay.size == 0){
+                println("Everything filtered out")
+                enterToContinue()
+                return true
+            }
+
+            mergeFilteredLists(ListMemStore(listsToDisplay),listMemStore)
+        }
+        else{//Filtering by Number of Items
+            println("How many items to filter for:")
+            input = readLine()!!
+            var itemAmount : Int
+            if (input.toIntOrNull() != null) {
+                itemAmount = input.toInt()
+            }
+            else{
+                return true
+            }
+
+            println("Would you like the filter to look for ids >= or <=? (g/l): ")
+            input = readLine()!!
+            var greaterThan = if(input.uppercase().contains("G")){
+                println("Filtered to look for >= $itemAmount")
+                true
+            } else {
+                println("Filtered to look for <= $itemAmount")
+                false
+            }
+
+            val listsToDisplay = ArrayList<ListModel>()
+            for(list : ListModel in listMemStore.lists) {
+                if((list.items.size >= itemInput()) == greaterThan){
+                    listsToDisplay.add(list)
+                }
+            }
+
+            mergeFilteredLists(ListMemStore(listsToDisplay),listMemStore)
+        }
         return true
-        //Filter by name or items
+    }
 
-        //Name is fairly similar to filtering items by name
-        //Filtering items will be done with id's and item name, so also similar to previous filter
+    fun mergeFilteredLists(temp : ListMemStore, lists : ListMemStore){
+        temp.logAll()
+        if(temp.lists.size == 0)
+            return
+        println("Would you like to make a new list from filtered search? (y/n) : ")
+        var input : String = readLine()!!
+        if (!input.uppercase().contains("Y"))
+            return
+        val tempList = ListModel()
+        println()
+        println("Enter a name for the new List : ")
+        tempList.name = readLine()!!
+        for (list : ListModel in temp.lists ){
+            for (itemIDs in list.items){
+                tempList.items.add(itemIDs)
+            }
+        }
+        lists.create(tempList)
+    }
 
-        //When filtered and more than one list occurs ask user do they want to merge lists
+    fun nameFilter(names : ArrayList<String>): Boolean{
+        var input : String
+        while(true){
+            input = readLine()!!
+            if(input.isNotEmpty()){
+                names.add(input)
+                println("Would you like to add another name to the filter (y/n): ")
+                input = readLine()!!
+                if (input.uppercase().contains("N"))
+                    break
+                println("Enter additional name to filter (Case Sensitive):")
+            }
+            else
+                println("Nothing entered, please enter a non empty value")
+        }
+
+        println("Would you like the filter to include or exclude filtered names? (i/e): ")
+        input = readLine()!!
+        return if(input.uppercase().contains("E")){
+            println("Filtered to exclude $names")
+            false
+        } else {
+            println("Filtered to include $names")
+            true
+        }
+    }
+
+    fun Randomgen(lists: ListMemStore, items: ItemMemStore) {
+        cleanAllOfAll(lists,items)
+        var input : String
+        var num = 0
+        var duplicates = false
+        lists.logAll()
+        println("Enter ID of the list you want to use:")
+        input = readLine()!!
+        if (input.toIntOrNull() != null) {
+            num = input.toInt()
+        }
+        else{
+            println("Please enter a natural number for list ID")
+            enterToContinue()
+        }
+        var temp : ListModel? = lists.findOne(num)
+        var list : ListModel = if(temp != null) {temp}
+        else{println("Invalid list ID")
+        return}
+
+        lists.logOne(list)
+
+        println("How many items do you want to display:")
+        input = readLine()!!
+        if (input.toIntOrNull() != null) {
+            num = input.toInt()
+        }
+        else{
+            println("Items to display should be a natural number")
+            enterToContinue()
+        }
+
+        println("Do you want duplicates(y/n):")
+        input = readLine()!!
+        if (input.uppercase().contains("Y")) {
+            duplicates = true
+        }
+
+        //Generate
+        generate(list,duplicates,num, items)
+        //Loop for regenerating
+        while(true){
+            println("Would you like to generate another?(y/n)")
+            if (input.uppercase().contains("Y")) {
+                generate(list,duplicates,num, items)
+            }
+            else{
+                break
+            }
+        }
+    }
+
+    fun generate(list: ListModel, duplicates: Boolean, numberOfGens : Int, items: ItemMemStore) {
+        println("Generating " + numberOfGens + " items from " + list.name)
+        var itemGenList : ArrayList<ItemModel> = ArrayList()
+        for (item in list.items ){
+            itemGenList.add(items.findOne(item)!!)
+        }
+
+        var totalWeight : Float = 0.0F
+        for (item in itemGenList) { totalWeight += item.weight }
+        var randomNum = 0.0F
+        var count = 0.0F
+
+        var i = 0
+        var loopBreak = 0
+        var generatedItems : ArrayList<ItemModel> = ArrayList()
+        while(i < numberOfGens){
+            randomNum = Random.nextFloat() * totalWeight
+            count = 0.0F
+            var found = false
+            for(item in itemGenList){
+                if(generatedItems.contains(item) && !duplicates) {
+                    break
+                }
+                else if(randomNum >= count && randomNum < count + item.weight){
+                  println("-> " + item.name)
+                  generatedItems.add(item)
+                  found = true
+                  break
+                }
+
+                count += item.weight
+
+            }
+            if(found)
+                i++
+            else
+                loopBreak++
+
+            if(loopBreak > 10000){
+                break
+            }
+        }
+
+        enterToContinue()
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

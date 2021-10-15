@@ -2,7 +2,7 @@
 A console application developed for mobile app development 1, made in with intellij using kotlin
 
 
-Users create "Items" which are object that have a name and a weigh
+Users create "Items" which are object that have a name and a weight
 Items are then added to "Item Lists" for random selection
 
 

@@ -1,4 +1,6 @@
+import org.wit.assignment.rand.models.ItemJSONStore
 import org.wit.assignment.rand.models.ItemModel
+import org.wit.assignment.rand.models.ListJSONStore
 import org.wit.assignment.rand.models.ListModel
 import kotlin.random.Random
 
@@ -30,14 +32,14 @@ class EntityView {
         return option
     }
 
-    fun listItems(items : ItemMemStore) {
+    fun listItems(items : ItemJSONStore) {
         println("List Items")
         println()
         items.logAll()
         println()
     }
 
-    fun listLists(lists : ListMemStore) {
+    fun listLists(lists : ListJSONStore) {
         println("List Item Lists")
         println()
         lists.logAll()
@@ -102,7 +104,7 @@ class EntityView {
     }
 
 
-    fun addListData(list : ListModel, items : ItemMemStore) : Boolean {
+    fun addListData(list : ListModel, items : ItemJSONStore) : Boolean {
         if (items.items.size < 2){
             println("Too few Items to construct an item list")
             return false
@@ -119,7 +121,7 @@ class EntityView {
         return list.name.isNotEmpty() && list.items.size >= 2
     }
 
-    fun updateListData(list : ListModel?, items : ItemMemStore) : Boolean {
+    fun updateListData(list : ListModel?, items : ItemJSONStore) : Boolean {
         //Ask user to add at least 2 items to list
         if (items.items.size < 2){
             println("Too few Items available to edit the list")
@@ -141,7 +143,7 @@ class EntityView {
         return false
     }
 
-    private fun itemSelection(list : ListModel, items : ItemMemStore){
+    private fun itemSelection(list : ListModel, items : ItemJSONStore){
         items.logAll()
         enterToContinue()
         var itemID : Int
@@ -197,7 +199,7 @@ class EntityView {
             -1
     }
 
-    fun listContains(list : ListModel?, items: ItemMemStore){
+    fun listContains(list : ListModel?, items: ItemJSONStore){
         if(list != null)
             for(item : Int in list.items){
                 if(!items.logOne(items.findOne(item))){
@@ -206,7 +208,7 @@ class EntityView {
             }
     }
 
-    fun cleanAllLists(lists : ListMemStore, item : ItemModel){        //-> Removes a single item from all lists
+    fun cleanAllLists(lists : ListJSONStore, item : ItemModel){        //-> Removes a single item from all lists
         //Called when items are deleted
         println("Cleaning all lists, of removed item")
         for(list in lists.lists){
@@ -218,7 +220,7 @@ class EntityView {
         }
     }
 
-    fun cleanListOfAll(list : ListModel, items : ItemMemStore){          //-> Removes all deleted items from a list
+    fun cleanListOfAll(list : ListModel, items : ItemJSONStore){          //-> Removes all deleted items from a list
         //Clear a list of all items that have been deleted
         for(item : Int in list.items){
             //findOne and if null remove item from list
@@ -228,7 +230,7 @@ class EntityView {
         }
     }
 
-    fun cleanAllOfAll(lists : ListMemStore, items : ItemMemStore){
+    fun cleanAllOfAll(lists : ListJSONStore, items : ItemJSONStore){
         for(list in lists.lists){
             cleanListOfAll(list, items)
         }
@@ -251,7 +253,7 @@ class EntityView {
         readLine()
     }
 
-    fun filterItems(itemMemStore : ItemMemStore, listMemStore: ListMemStore) : Boolean {
+    fun filterItems(itemJSONStore : ItemJSONStore, listJSONStore: ListJSONStore) : Boolean {
         println("Would you like to filter search? (y/n) : ")
         var input : String
         input = readLine()!!
@@ -268,7 +270,7 @@ class EntityView {
             var include = nameFilter(filteredNames);
             val itemsToDisplay = ArrayList<ItemModel>()
 
-            for (item : ItemModel in itemMemStore.items){
+            for (item : ItemModel in itemJSONStore.items){
                 var found = false
                 for(i in 0 until filteredNames.size){
                     if (item.name.contains(filteredNames[i])) {
@@ -280,9 +282,9 @@ class EntityView {
                     itemsToDisplay.add(item)
                 }
             }
-            var temp = ItemMemStore(itemsToDisplay)
+            var temp = ItemJSONStore(itemsToDisplay)
             temp.logAll()
-            filteredItemsToList(temp,listMemStore)
+            filteredItemsToList(temp,listJSONStore)
         }
         else{
             println("Enter weight to filter (Example 10.025): ")
@@ -305,24 +307,24 @@ class EntityView {
             }
 
             val itemsToDisplay = ArrayList<ItemModel>()
-            for (item : ItemModel in itemMemStore.items){
+            for (item : ItemModel in itemJSONStore.items){
                 if(item.weight > weightCheck == greaterThan){
                     itemsToDisplay.add(item)
                 }
             }
 
-            var temp = ItemMemStore(itemsToDisplay)
+            var temp = ItemJSONStore(itemsToDisplay)
 
             if (temp.items.size == 0)
                 return true
 
             temp.logAll()
-            filteredItemsToList(temp,listMemStore)
+            filteredItemsToList(temp,listJSONStore)
         }
         return true
     }
 
-    fun filteredItemsToList(itemsToMakeListFrom : ItemMemStore, listMemStore: ListMemStore){
+    fun filteredItemsToList(itemsToMakeListFrom : ItemJSONStore, listJSONStore: ListJSONStore){
         if(itemsToMakeListFrom.items.size == 0)
             return
         println("Would you like to make a list from filtered search? (y/n) : ")
@@ -336,10 +338,10 @@ class EntityView {
         for (item in itemsToMakeListFrom.items){
             tempList.items.add(item.id)
         }
-        listMemStore.create(tempList)
+        listJSONStore.create(tempList)
     }
 
-    fun filterLists(listMemStore: ListMemStore) : Boolean{
+    fun filterLists(listJSONStore: ListJSONStore) : Boolean{
 
         println("Would you like to filter search? (y/n) : ")
         var input : String
@@ -359,7 +361,7 @@ class EntityView {
 
             val listsToDisplay = ArrayList<ListModel>()
 
-            for (list : ListModel in listMemStore.lists){
+            for (list : ListModel in listJSONStore.lists){
                 var found = false
                 for(i in 0 until filteredNames.size){
                     if (list.name.contains(filteredNames[i])) {
@@ -371,7 +373,7 @@ class EntityView {
                     listsToDisplay.add(list)
                 }
             }
-            mergeFilteredLists(ListMemStore(listsToDisplay),listMemStore)
+            mergeFilteredLists(ListJSONStore(listsToDisplay),listJSONStore)
         }
         //Filtering by an item ID
         else if(input.uppercase().contains("D")) {
@@ -399,7 +401,7 @@ class EntityView {
 
             val listsToDisplay = ArrayList<ListModel>()
             var contains = false
-            for(list : ListModel in listMemStore.lists) {
+            for(list : ListModel in listJSONStore.lists) {
                 contains = true
                 for(ID in filteredIDs) {
                     if(!list.items.contains(ID)){
@@ -417,7 +419,7 @@ class EntityView {
                 return true
             }
 
-            mergeFilteredLists(ListMemStore(listsToDisplay),listMemStore)
+            mergeFilteredLists(ListJSONStore(listsToDisplay),listJSONStore)
         }
         else{//Filtering by Number of Items
             println("How many items to filter for:")
@@ -441,18 +443,18 @@ class EntityView {
             }
 
             val listsToDisplay = ArrayList<ListModel>()
-            for(list : ListModel in listMemStore.lists) {
+            for(list : ListModel in listJSONStore.lists) {
                 if((list.items.size >= itemInput()) == greaterThan){
                     listsToDisplay.add(list)
                 }
             }
 
-            mergeFilteredLists(ListMemStore(listsToDisplay),listMemStore)
+            mergeFilteredLists(ListJSONStore(listsToDisplay),listJSONStore)
         }
         return true
     }
 
-    fun mergeFilteredLists(temp : ListMemStore, lists : ListMemStore){
+    fun mergeFilteredLists(temp : ListJSONStore, lists : ListJSONStore){
         temp.logAll()
         if(temp.lists.size == 0)
             return
@@ -499,7 +501,7 @@ class EntityView {
         }
     }
 
-    fun Randomgen(lists: ListMemStore, items: ItemMemStore) {
+    fun Randomgen(lists: ListJSONStore, items: ItemJSONStore) {
         cleanAllOfAll(lists,items)
         var input : String
         var num = 0
@@ -551,7 +553,7 @@ class EntityView {
         }
     }
 
-    fun generate(list: ListModel, duplicates: Boolean, numberOfGens : Int, items: ItemMemStore) {
+    fun generate(list: ListModel, duplicates: Boolean, numberOfGens : Int, items: ItemJSONStore) {
         println("Generating " + numberOfGens + " items from " + list.name)
         var itemGenList : ArrayList<ItemModel> = ArrayList()
         for (item in list.items ){

@@ -1,16 +1,16 @@
 package org.wit.assignment.rand.controllers
 
-import ItemMemStore
-import ListMemStore
 import EntityView
 import mu.KotlinLogging
+import org.wit.assignment.rand.models.ItemJSONStore
 import org.wit.assignment.rand.models.ItemModel
+import org.wit.assignment.rand.models.ListJSONStore
 import org.wit.assignment.rand.models.ListModel
 
 class EntityController {
 
-    val items = ItemMemStore()
-    val lists = ListMemStore()
+    val items = ItemJSONStore()
+    val lists = ListJSONStore()
     val entityView = EntityView()
     val logger = KotlinLogging.logger {}
 

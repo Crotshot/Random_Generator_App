@@ -13,9 +13,9 @@ import java.util.*
 
 private val logger = KotlinLogging.logger {}
 
-val JSON_FILE = "items.json"
-val gsonBuilder = GsonBuilder().setPrettyPrinting().create()
-val listType = object : TypeToken<java.util.ArrayList<ItemModel>>() {}.type
+val JSON_FILE_Items = "items.json"
+val gsonBuilder_Items = GsonBuilder().setPrettyPrinting().create()
+val listType_Items = object : TypeToken<java.util.ArrayList<ItemModel>>() {}.type
 
 internal fun generateItemRandomId(): Int {
     return Random().nextInt()
@@ -26,16 +26,8 @@ class ItemJSONStore  : ItemStore{
     var items = ArrayList<ItemModel>()
 
     init {
-        if (exists(JSON_FILE)) {
+        if (exists(JSON_FILE_Items)) {
             deserialize()
-        }
-    }
-
-    constructor(){}
-
-    constructor(items: ArrayList<ItemModel>){
-        for (item : ItemModel in items){
-            this.items.add(item)
         }
     }
 
@@ -86,12 +78,17 @@ class ItemJSONStore  : ItemStore{
     }
 
     private fun serialize() {
-        val jsonString = gsonBuilder.toJson(items, listType)
-        write(JSON_FILE, jsonString)
+        val jsonString = gsonBuilder_Items.toJson(items, listType_Items)
+        write(JSON_FILE_Items, jsonString)
     }
 
     private fun deserialize() {
-        val jsonString = read(JSON_FILE)
-        items = Gson().fromJson(jsonString, listType)
+        val jsonString = read(JSON_FILE_Items)
+        items = Gson().fromJson(jsonString, listType_Items)
+    }
+
+    fun deleteAll(items: ItemJSONStore) {
+        items.items.clear()
+        serialize()
     }
 }

@@ -13,19 +13,22 @@ import java.util.*
 
 private val logger = KotlinLogging.logger {}
 
+val JSON_FILE_Lists = "lists.json"
+val gsonBuilder_Lists = GsonBuilder().setPrettyPrinting().create()
+val listType_Lists = object : TypeToken<java.util.ArrayList<ListModel>>() {}.type
+
+
 internal fun generateListRandomId(): Int {
     return Random().nextInt()
 }
 
 class ListJSONStore : ListStore{
 
-    val lists = ArrayList<ListModel>()
+    var lists = ArrayList<ListModel>()
 
-    constructor(){}
-
-    constructor(lists: ArrayList<ListModel>){
-        for (list : ListModel in lists){
-            this.lists.add(list)
+    init {
+        if (exists(JSON_FILE_Lists)) {
+            deserialize()
         }
     }
 
@@ -41,6 +44,7 @@ class ListJSONStore : ListStore{
         list.id = generateListRandomId()
         lists.add(list)
         logAll()
+        serialize()
     }
 
     override fun update(list : ListModel) {
@@ -52,6 +56,7 @@ class ListJSONStore : ListStore{
                 loclist.items.add(item)
             }
         }
+        serialize()
     }
 
     override fun delete(list : ListModel) {
@@ -74,5 +79,20 @@ class ListJSONStore : ListStore{
                 }
             }
         return false;
+    }
+
+    private fun serialize() {
+        val jsonString = gsonBuilder_Lists.toJson(lists, listType_Lists)
+        write(JSON_FILE_Lists, jsonString)
+    }
+
+    private fun deserialize() {
+        val jsonString = read(JSON_FILE_Lists)
+        lists = Gson().fromJson(jsonString, listType_Lists)
+    }
+
+    fun deleteAll(lists: ListJSONStore) {
+        lists.lists.clear()
+        serialize()
     }
 }

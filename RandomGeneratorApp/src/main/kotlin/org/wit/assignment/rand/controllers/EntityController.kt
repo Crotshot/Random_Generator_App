@@ -20,7 +20,6 @@ class EntityController {
     }
 
     fun start(){
-
         logger.info { "Launching Placemark Console App" }
         println("Placemark Kotlin App Version 1.0")
         entityView.enterToContinue()
@@ -40,6 +39,8 @@ class EntityController {
                 9 -> generate()
                 10 -> showAllItems()
                 11 -> showAllLists()
+                12 -> deleteAllItems()
+                13 -> deleteAllLists()
                 -99 -> dummyData()
                 -1 -> println("Exiting App")
                 else -> println("Invalid Option")
@@ -52,7 +53,7 @@ class EntityController {
     fun menu():Int { return entityView.menu()}
 
     fun addItem(){
-        var anItem = ItemModel()
+        val anItem = ItemModel()
 
         if(entityView.addItemData(anItem))
             items.create(anItem)
@@ -62,7 +63,7 @@ class EntityController {
     }
 
     fun addList(){
-        var aList = ListModel()
+        val aList = ListModel()
 
         if(entityView.addListData(aList, items))
             lists.create(aList)
@@ -180,6 +181,20 @@ class EntityController {
         entityView.enterToContinue()
     }
 
+    private fun deleteAllItems() {
+        if(entityView.areYouSure("delete all items?(y/n)")) {
+            items.deleteAll(items)
+            entityView.cleanAllOfAll(lists, items)
+        }
+        entityView.enterToContinue()
+    }
+
+    private fun deleteAllLists() {
+        if(entityView.areYouSure("delete all lists?(y/n)"))
+            lists.deleteAll(lists)
+        entityView.enterToContinue()
+    }
+
     fun dummyData(){
         ///*//Fair Dice -> Each side has an equal weight
         items.create(ItemModel(name = "One", weight = 1F))
@@ -195,28 +210,5 @@ class EntityController {
         items.create(ItemModel(name = "Heads", weight = 10F))
         items.create(ItemModel(name = "Tails", weight = 10F))
         //*/
-
-        var itemIDArrayList1 : ArrayList<Int> = ArrayList()
-        itemIDArrayList1.add(6)
-        itemIDArrayList1.add(7)
-        lists.create((ListModel(name = "Coin", items = itemIDArrayList1)))
-        var itemIDArrayList2 : ArrayList<Int> = ArrayList()
-        itemIDArrayList2.add(0)
-        itemIDArrayList2.add(1)
-        itemIDArrayList2.add(2)
-        itemIDArrayList2.add(3)
-        itemIDArrayList2.add(4)
-        itemIDArrayList2.add(5)
-        lists.create(ListModel(name = "Die", items = itemIDArrayList2))
-        var itemIDArrayList : ArrayList<Int> = ArrayList()
-        itemIDArrayList.add(0)
-        itemIDArrayList.add(1)
-        itemIDArrayList.add(2)
-        itemIDArrayList.add(3)
-        itemIDArrayList.add(4)
-        itemIDArrayList.add(5)
-        itemIDArrayList.add(6)
-        itemIDArrayList.add(7)
-        lists.create((ListModel(name = "MixedBag", items = itemIDArrayList)))
     }
 }

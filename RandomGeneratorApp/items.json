@@ -1,0 +1,57 @@
+[
+  {
+    "id": -1706546238,
+    "name": "Banana",
+    "weight": 7.0
+  },
+  {
+    "id": 483068009,
+    "name": "Apple",
+    "weight": 10.0
+  },
+  {
+    "id": 1044190817,
+    "name": "One",
+    "weight": 1.0
+  },
+  {
+    "id": 1782594364,
+    "name": "Two",
+    "weight": 1.0
+  },
+  {
+    "id": -741753102,
+    "name": "Three",
+    "weight": 1.0
+  },
+  {
+    "id": 1372805488,
+    "name": "Four",
+    "weight": 1.0
+  },
+  {
+    "id": -114080208,
+    "name": "Five",
+    "weight": 1.0
+  },
+  {
+    "id": -876865518,
+    "name": "Six",
+    "weight": 1.0
+  },
+  {
+    "id": -273267361,
+    "name": "Heads",
+    "weight": 10.0
+  },
+  {
+    "id": -1932083149,
+    "name": "Tails",
+    "weight": 10.0
+  },
+  {
+    "id": 1577641898,
+    "name": "11",
+    "weight": 1.0
+  }
+]

@@ -23,6 +23,8 @@ class EntityView {
         println("9:     Random selection")
         println("10:    List Items")
         println("11:    List Item Lists")
+        println("12:    Delete all Items")
+        println("13:    Delete all lists")
         println("-99:   Add dummy data(FOR TESTING)")
         println("-1:    Exiting App")
         println()
@@ -147,11 +149,13 @@ class EntityView {
         items.logAll()
         enterToContinue()
         var itemID : Int
+        var item : ItemModel?
         while(true) {
             println("Add the first item to the list by ID")
             itemID = itemInput()
-            if (items.findOne(itemID) != null) {
-                list.items.add(itemID)
+            item = items.findOne(itemID)
+            if (item != null) {
+                list.items.add(item.id)
                 break
             }
             else{
@@ -161,8 +165,9 @@ class EntityView {
         while(true) {
             println("Add the second item to the list by ID")
             itemID = itemInput()
-            if (items.findOne(itemID) != null) {
-                list.items.add(itemID)
+            item = items.findOne(itemID)
+            if (item != null) {
+                list.items.add(item.id)
                 break
             }
             else{
@@ -177,8 +182,9 @@ class EntityView {
                 return
             println("Add another item to the list by ID")
             itemID = itemInput()
-            if (items.findOne(itemID) != null) {
-                list.items.add(itemID)
+            item = items.findOne(itemID)
+            if (item!= null) {
+                list.items.add(item.id)
             }
             else{
                 if(itemID == -2)
@@ -191,12 +197,12 @@ class EntityView {
     private fun itemInput(): Int {
         var input = readLine()!!
         return if (input.toIntOrNull() != null && !input.isEmpty())
-            if (input.toInt() >= 0)
+            if (input.toInt() != 0)
                 input.toInt()
             else
-                -1
+                0
         else
-            -1
+            0
     }
 
     fun listContains(list : ListModel?, items: ItemJSONStore){
@@ -222,11 +228,15 @@ class EntityView {
 
     fun cleanListOfAll(list : ListModel, items : ItemJSONStore){          //-> Removes all deleted items from a list
         //Clear a list of all items that have been deleted
+        val removeArray : ArrayList<Int> = ArrayList()
         for(item : Int in list.items){
             //findOne and if null remove item from list
             if(items.findOne(item) == null){
-                list.items.remove(item)
+                removeArray.add(item)
             }
+        }
+        for(num in removeArray){
+            list.items.remove(num)
         }
     }
 
@@ -282,9 +292,8 @@ class EntityView {
                     itemsToDisplay.add(item)
                 }
             }
-            var temp = ItemJSONStore(itemsToDisplay)
-            temp.logAll()
-            filteredItemsToList(temp,listJSONStore)
+
+            filteredItemsToList(itemsToDisplay,listJSONStore)
         }
         else{
             println("Enter weight to filter (Example 10.025): ")
@@ -313,19 +322,16 @@ class EntityView {
                 }
             }
 
-            var temp = ItemJSONStore(itemsToDisplay)
-
-            if (temp.items.size == 0)
-                return true
-
-            temp.logAll()
-            filteredItemsToList(temp,listJSONStore)
+            filteredItemsToList(itemsToDisplay,listJSONStore)
         }
         return true
     }
 
-    fun filteredItemsToList(itemsToMakeListFrom : ItemJSONStore, listJSONStore: ListJSONStore){
-        if(itemsToMakeListFrom.items.size == 0)
+    fun filteredItemsToList(itemsToMakeListFrom : ArrayList<ItemModel>, listJSONStore: ListJSONStore){
+        for (item in itemsToMakeListFrom){
+            println("Name-> " + item.name + "| ID-> " + item.id + "| Weight-> " + item.weight)
+        }
+        if(itemsToMakeListFrom.size == 0)
             return
         println("Would you like to make a list from filtered search? (y/n) : ")
         var input : String = readLine()!!
@@ -335,7 +341,7 @@ class EntityView {
         println()
         println("Enter a name for the new List : ")
         tempList.name = readLine()!!
-        for (item in itemsToMakeListFrom.items){
+        for (item in itemsToMakeListFrom){
             tempList.items.add(item.id)
         }
         listJSONStore.create(tempList)
@@ -373,7 +379,7 @@ class EntityView {
                     listsToDisplay.add(list)
                 }
             }
-            mergeFilteredLists(ListJSONStore(listsToDisplay),listJSONStore)
+            mergeFilteredLists(listsToDisplay,listJSONStore)
         }
         //Filtering by an item ID
         else if(input.uppercase().contains("D")) {
@@ -419,7 +425,7 @@ class EntityView {
                 return true
             }
 
-            mergeFilteredLists(ListJSONStore(listsToDisplay),listJSONStore)
+            mergeFilteredLists(listsToDisplay,listJSONStore)
         }
         else{//Filtering by Number of Items
             println("How many items to filter for:")
@@ -444,19 +450,21 @@ class EntityView {
 
             val listsToDisplay = ArrayList<ListModel>()
             for(list : ListModel in listJSONStore.lists) {
-                if((list.items.size >= itemInput()) == greaterThan){
+                if((list.items.size >= itemAmount) == greaterThan){
                     listsToDisplay.add(list)
                 }
             }
 
-            mergeFilteredLists(ListJSONStore(listsToDisplay),listJSONStore)
+            mergeFilteredLists(listsToDisplay,listJSONStore)
         }
         return true
     }
 
-    fun mergeFilteredLists(temp : ListJSONStore, lists : ListJSONStore){
-        temp.logAll()
-        if(temp.lists.size == 0)
+    fun mergeFilteredLists(listsToMerge : ArrayList<ListModel>, lists : ListJSONStore){
+        for (list in listsToMerge){
+            println("Name-> " + list.name + "| ID-> " + list.id)
+        }
+        if(listsToMerge.size == 0)
             return
         println("Would you like to make a new list from filtered search? (y/n) : ")
         var input : String = readLine()!!
@@ -466,7 +474,7 @@ class EntityView {
         println()
         println("Enter a name for the new List : ")
         tempList.name = readLine()!!
-        for (list : ListModel in temp.lists ){
+        for (list : ListModel in listsToMerge ){
             for (itemIDs in list.items){
                 tempList.items.add(itemIDs)
             }
@@ -544,11 +552,12 @@ class EntityView {
         //Loop for regenerating
         while(true){
             println("Would you like to generate another?(y/n)")
-            if (input.uppercase().contains("Y")) {
-                generate(list,duplicates,num, items)
+            input = readLine()!!
+            if (!input.uppercase().contains("Y")) {
+                break
             }
             else{
-                break
+                generate(list,duplicates,num, items)
             }
         }
     }
@@ -597,6 +606,14 @@ class EntityView {
         }
 
         enterToContinue()
+    }
+
+    fun areYouSure(context : String) : Boolean{
+        println("Are you sure you want to " + context)
+        var input : String = readLine()!!
+        if (!input.uppercase().contains("Y"))
+            return false
+        return true
     }
 }
 

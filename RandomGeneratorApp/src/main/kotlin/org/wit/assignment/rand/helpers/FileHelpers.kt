@@ -5,6 +5,7 @@ import java.io.*
 
 val logger = KotlinLogging.logger {}
 
+//Write out a file
 fun write( fileName: String, data: String) {
 
     val file = File(fileName)
@@ -16,7 +17,7 @@ fun write( fileName: String, data: String) {
         logger.error { "Cannot read file: " + e.toString() }
     }
 }
-
+//Read in a file
 fun read(fileName: String): String {
     val file = File(fileName)
     var str = ""
@@ -41,7 +42,7 @@ fun read(fileName: String): String {
     }
     return str
 }
-
+//Checks the existence of a file
 fun exists(fileName: String): Boolean {
     val file = File(fileName)
     return file.exists()

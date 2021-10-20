@@ -6,4 +6,5 @@ interface ItemStore {
     fun create(item : ItemModel)
     fun update(item : ItemModel)
     fun delete(item : ItemModel)
+    fun deleteAll(items: ItemJSONStore)
 }

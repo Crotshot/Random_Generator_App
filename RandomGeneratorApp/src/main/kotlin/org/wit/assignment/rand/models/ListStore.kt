@@ -6,4 +6,5 @@ interface ListStore {
     fun create(list: ListModel)
     fun update(list: ListModel)
     fun delete(list: ListModel)
+    fun deleteAll(lists: ListJSONStore)
 }

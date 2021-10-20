@@ -25,7 +25,7 @@ class EntityController {
         entityView.enterToContinue()
         var input: Int
 
-        do {
+        do { //User input
             input = menu()
             when(input) {
                 1 -> addItem()
@@ -49,9 +49,10 @@ class EntityController {
         } while (input != -1)
         logger.info { "Shutting Down Placemark Console App" }
     }
-
+    //Show menu
     fun menu():Int { return entityView.menu()}
 
+    //Create an Item and ad it to the ItemJSONStore
     fun addItem(){
         val anItem = ItemModel()
 
@@ -61,7 +62,7 @@ class EntityController {
             logger.info("Item not added")
         entityView.enterToContinue()
     }
-
+    //Create an List and ad it to the ListJSONStore
     fun addList(){
         val aList = ListModel()
 
@@ -71,7 +72,7 @@ class EntityController {
             logger.info("List not created")
         entityView.enterToContinue()
     }
-
+    //Edit an items weight and name
     fun editItem(){
         entityView.listItems(items)
         var searchId = entityView.getId()
@@ -91,7 +92,7 @@ class EntityController {
         }
         entityView.enterToContinue()
     }
-
+    //Edit a lists name and list of items
     fun editList(){
         entityView.listLists(lists)
         var searchId = entityView.getId()
@@ -110,7 +111,7 @@ class EntityController {
         }
         entityView.enterToContinue()
     }
-
+    //Delete an item and clean all item lists of it
     fun removeItem(){
         entityView.listItems(items)
         var searchId = entityView.getId()
@@ -126,7 +127,7 @@ class EntityController {
         }
         entityView.enterToContinue()
     }
-
+    //Delete a list
     fun removeList(){
         entityView.listLists(lists)
         var searchId = entityView.getId()
@@ -141,12 +142,12 @@ class EntityController {
         }
         entityView.enterToContinue()
     } //Delete a a list
-
+    //Clean all lists and generate random lists
     fun generate(){
         entityView.cleanAllOfAll(lists, items)
         entityView.Randomgen(lists, items)
     }
-
+    //Search for item by id or filter
     fun searchItems(){
         if(!entityView.filterItems(items,lists)) {
             val anItem = searchItems(entityView.getId())
@@ -154,11 +155,11 @@ class EntityController {
         }
         entityView.enterToContinue()
     }
-
+    //Return an item by ID
     fun searchItems(id: Int): ItemModel? {
         return items.findOne(id)
     }
-
+    //Search through item list array by id search of by filtering
     fun searchLists(){
         if(!entityView.filterLists(lists)) {
             val aList: ListModel = searchLists(entityView.getId()) ?: return
@@ -166,21 +167,22 @@ class EntityController {
         }
         entityView.enterToContinue()
     }
+    //Return list by ID
     fun searchLists(id: Int): ListModel? {
         return lists.findOne(id)
     }
-
+    //Show all lists
     fun showAllItems(){
-
         entityView.listItems(items)
         entityView.enterToContinue()
     }
+    //Show all lists
     fun showAllLists(){
         entityView.cleanAllOfAll(lists, items)
         entityView.listLists(lists)
         entityView.enterToContinue()
     }
-
+    //Deletes all items and removes every ite from every list
     private fun deleteAllItems() {
         if(entityView.areYouSure("delete all items?(y/n)")) {
             items.deleteAll(items)
@@ -188,13 +190,13 @@ class EntityController {
         }
         entityView.enterToContinue()
     }
-
+    //Deletes all lists
     private fun deleteAllLists() {
         if(entityView.areYouSure("delete all lists?(y/n)"))
             lists.deleteAll(lists)
         entityView.enterToContinue()
     }
-
+    //Dummy data used for testing
     fun dummyData(){
         ///*//Fair Dice -> Each side has an equal weight
         items.create(ItemModel(name = "One", weight = 1F))

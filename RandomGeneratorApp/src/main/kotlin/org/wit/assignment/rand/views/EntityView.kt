@@ -5,7 +5,7 @@ import org.wit.assignment.rand.models.ListModel
 import kotlin.random.Random
 
 class EntityView {
-
+    //Simple console menu that displays a users options
     fun menu() : Int {
 
         var option : Int
@@ -33,37 +33,37 @@ class EntityView {
         option = if (input.toIntOrNull() != null && !input.isEmpty()) input.toInt() else -9
         return option
     }
-
+    //Log all items
     fun listItems(items : ItemJSONStore) {
         println("List Items")
         println()
         items.logAll()
         println()
     }
-
+    //Log all lists
     fun listLists(lists : ListJSONStore) {
         println("List Item Lists")
         println()
         lists.logAll()
         println()
     }
-
+    //Print the details of an item
     fun showItem(item : ItemModel?) {
         if(item != null)
             println("Item Details [ $item ]")
         else
             println("Item Not Found...")
     }
-
+    //Print the details of a list
     fun showList(list : ListModel?) {
         if(list != null)
             println("Item Details [ $list ]")
         else
             println("Item Not Found...")
     }
-
+    //Ask user for input on an items name and weight
     fun addItemData(item : ItemModel) : Boolean {
-        //Create an item with a name and weight, auto assign id using a while loop, starting at zero and incrementing up
+        //Create an item with a name and weight, auto assign id using a randomness
         println()
         println("Enter a name for the Item : ")
         item.name = readLine()!!
@@ -71,7 +71,7 @@ class EntityView {
         item.weight = weightInput()
         return item.name.isNotEmpty() && item.weight > 0F
     }
-
+    //Update an items data by requesting use eneter a new name and weight
     fun updateItemData(item : ItemModel?) : Boolean {
         var tempName: String?
         var tempWeight: Float?
@@ -90,7 +90,7 @@ class EntityView {
         }
         return false
     }
-
+    //Helper method for inputting floats for item weight
     private fun weightInput(): Float {
         var input = readLine()!!
         return if (input.toFloatOrNull() != null && !input.isEmpty())
@@ -105,7 +105,7 @@ class EntityView {
             -1F
     }
 
-
+    //Ask user to enter a name and select items to put in an item list
     fun addListData(list : ListModel, items : ItemJSONStore) : Boolean {
         if (items.items.size < 2){
             println("Too few Items to construct an item list")
@@ -122,7 +122,7 @@ class EntityView {
 
         return list.name.isNotEmpty() && list.items.size >= 2
     }
-
+    //Ask user to enter a name and select items to put in an item list
     fun updateListData(list : ListModel?, items : ItemJSONStore) : Boolean {
         //Ask user to add at least 2 items to list
         if (items.items.size < 2){
@@ -135,7 +135,7 @@ class EntityView {
             val tempName: String? = readLine()!!
 
             println("Enter new Items ID's for Item list")
-            itemSelection(list, items)
+            itemSelection(list, items) //Select items
 
             if (!tempName.isNullOrEmpty()) {
                 list.name = tempName
@@ -144,7 +144,7 @@ class EntityView {
         }
         return false
     }
-
+    //User is asked to select at least 2 items
     private fun itemSelection(list : ListModel, items : ItemJSONStore){
         items.logAll()
         enterToContinue()
@@ -193,7 +193,7 @@ class EntityView {
             }
         }
     }
-
+    //Enter the ID of an item
     private fun itemInput(): Int {
         var input = readLine()!!
         return if (input.toIntOrNull() != null && !input.isEmpty())
@@ -204,7 +204,7 @@ class EntityView {
         else
             0
     }
-
+    //Checks that a list contains an item that is in the ItemJSONStore, if it is not the item is removed
     fun listContains(list : ListModel?, items: ItemJSONStore){
         if(list != null)
             for(item : Int in list.items){
@@ -213,7 +213,7 @@ class EntityView {
                 }
             }
     }
-
+    //Removes an item from all lists that has been previously removed
     fun cleanAllLists(lists : ListJSONStore, item : ItemModel){        //-> Removes a single item from all lists
         //Called when items are deleted
         println("Cleaning all lists, of removed item")
@@ -225,7 +225,7 @@ class EntityView {
             }
         }
     }
-
+    //Removes all deleted items from a list
     fun cleanListOfAll(list : ListModel, items : ItemJSONStore){          //-> Removes all deleted items from a list
         //Clear a list of all items that have been deleted
         val removeArray : ArrayList<Int> = ArrayList()
@@ -239,13 +239,13 @@ class EntityView {
             list.items.remove(num)
         }
     }
-
+    //Removes all removed items from all lists that contain them
     fun cleanAllOfAll(lists : ListJSONStore, items : ItemJSONStore){
         for(list in lists.lists){
             cleanListOfAll(list, items)
         }
     }
-
+    //Ask user for ID
     fun getId() : Int {
         var strId : String?
         var searchId : Int
@@ -262,7 +262,7 @@ class EntityView {
         println("Press Enter to continue. . . ")
         readLine()
     }
-
+    //Filter items by Name or Weight
     fun filterItems(itemJSONStore : ItemJSONStore, listJSONStore: ListJSONStore) : Boolean {
         println("Would you like to filter search? (y/n) : ")
         var input : String
@@ -273,13 +273,13 @@ class EntityView {
         input = readLine()!!
         if (!input.uppercase().contains("N") && !input.uppercase().contains("W"))
             return false
-
+        //Filtering by name
         if(input.uppercase().contains("N")){
             println("Enter name to filter (Case Sensitive): ")
             val filteredNames : ArrayList<String> = ArrayList()
-            var include = nameFilter(filteredNames);
+            var include = nameFilter(filteredNames) //Function to recursively ask for input until
             val itemsToDisplay = ArrayList<ItemModel>()
-
+            //Find all lists that include or exclude the search names
             for (item : ItemModel in itemJSONStore.items){
                 var found = false
                 for(i in 0 until filteredNames.size){
@@ -289,17 +289,17 @@ class EntityView {
                     }
                 }
                 if (found == include) {
-                    itemsToDisplay.add(item)
+                    itemsToDisplay.add(item) //Add found items to a temporary array list
                 }
             }
 
-            filteredItemsToList(itemsToDisplay,listJSONStore)
+            filteredItemsToList(itemsToDisplay,listJSONStore) // Ask user do they want to add items to  new list
         }
-        else{
+        else{ //Filtering by weight
             println("Enter weight to filter (Example 10.025): ")
             var weightInput : String
             var weightCheck : Float
-            while(true) {
+            while(true) { //Ask user for a valid weight
                 weightInput = readLine()!!
                 if (weightInput.toFloatOrNull() != null && !weightInput.isEmpty()) {
                     weightCheck = weightInput.toFloat()
@@ -314,19 +314,19 @@ class EntityView {
             if(input.uppercase().contains("L")){
                 greaterThan = false
             }
-
+            //Find all items with >= or < than weight
             val itemsToDisplay = ArrayList<ItemModel>()
             for (item : ItemModel in itemJSONStore.items){
                 if(item.weight > weightCheck == greaterThan){
-                    itemsToDisplay.add(item)
+                    itemsToDisplay.add(item) //Ass filtered items to list
                 }
             }
 
-            filteredItemsToList(itemsToDisplay,listJSONStore)
+            filteredItemsToList(itemsToDisplay,listJSONStore) //Ask user do they want to make a new list from filtered items
         }
         return true
     }
-
+    //Create a new list from all the filtered items
     fun filteredItemsToList(itemsToMakeListFrom : ArrayList<ItemModel>, listJSONStore: ListJSONStore){
         for (item in itemsToMakeListFrom){
             println("Name-> " + item.name + "| ID-> " + item.id + "| Weight-> " + item.weight)
@@ -346,9 +346,8 @@ class EntityView {
         }
         listJSONStore.create(tempList)
     }
-
+//Filter lists by name, item count by item id's
     fun filterLists(listJSONStore: ListJSONStore) : Boolean{
-
         println("Would you like to filter search? (y/n) : ")
         var input : String
         input = readLine()!!
@@ -363,7 +362,7 @@ class EntityView {
         if(input.uppercase().contains("N")){
             println("Enter name to filter (Case Sensitive): ")
             val filteredNames : ArrayList<String> = ArrayList()
-            var include = nameFilter(filteredNames)
+            var include = nameFilter(filteredNames) //Use of name filter again to get a list of names
 
             val listsToDisplay = ArrayList<ListModel>()
 
@@ -376,15 +375,15 @@ class EntityView {
                     }
                 }
                 if (found == include) {
-                    listsToDisplay.add(list)
+                    listsToDisplay.add(list)//Get all lists that include or exclude a name in the list
                 }
             }
-            mergeFilteredLists(listsToDisplay,listJSONStore)
+            mergeFilteredLists(listsToDisplay,listJSONStore) //Merge filtered lists into new list
         }
         //Filtering by an item ID
         else if(input.uppercase().contains("D")) {
             val filteredIDs: ArrayList<Int> = ArrayList()
-            while(true){
+            while(true){//Ask user for item ID's
                 println("Enter id to filter (eg 0, 1, 95, 43): ")
                 input = readLine()!!
                 if (input.toIntOrNull() != null) {
@@ -400,7 +399,6 @@ class EntityView {
                     }
                 }
             }
-
             println("Would you like the filter to include or exclude these ID's (i/e): ")
             input = readLine()!!
             var include = input.uppercase().contains("I")
@@ -416,7 +414,7 @@ class EntityView {
                     }
                 }
                 if(contains == include)
-                    listsToDisplay.add(list)
+                    listsToDisplay.add(list) //Get all filtered lists that include/exclude item id's
             }
 
             if(listsToDisplay.size == 0){
@@ -425,7 +423,7 @@ class EntityView {
                 return true
             }
 
-            mergeFilteredLists(listsToDisplay,listJSONStore)
+            mergeFilteredLists(listsToDisplay,listJSONStore) //Merge all lists and create a new list
         }
         else{//Filtering by Number of Items
             println("How many items to filter for:")
@@ -451,15 +449,15 @@ class EntityView {
             val listsToDisplay = ArrayList<ListModel>()
             for(list : ListModel in listJSONStore.lists) {
                 if((list.items.size >= itemAmount) == greaterThan){
-                    listsToDisplay.add(list)
+                    listsToDisplay.add(list)    //Get all lists that have >= or < a number of items
                 }
             }
 
-            mergeFilteredLists(listsToDisplay,listJSONStore)
+            mergeFilteredLists(listsToDisplay,listJSONStore) //Merge filtered lists to create a new list
         }
         return true
     }
-
+    //Combines multiple lists into a new list
     fun mergeFilteredLists(listsToMerge : ArrayList<ListModel>, lists : ListJSONStore){
         for (list in listsToMerge){
             println("Name-> " + list.name + "| ID-> " + list.id)
@@ -476,12 +474,12 @@ class EntityView {
         tempList.name = readLine()!!
         for (list : ListModel in listsToMerge ){
             for (itemIDs in list.items){
-                tempList.items.add(itemIDs)
+                tempList.items.add(itemIDs) //Create a temporary list to add all lists items to
             }
         }
-        lists.create(tempList)
+        lists.create(tempList) //Add temp list to ListJSONStore
     }
-
+    //Recursively ask user for inputs of names
     fun nameFilter(names : ArrayList<String>): Boolean{
         var input : String
         while(true){
@@ -508,20 +506,20 @@ class EntityView {
             true
         }
     }
-
+    //Randomly generates a random order of X items with or without dupicates
     fun Randomgen(lists: ListJSONStore, items: ItemJSONStore) {
-        cleanAllOfAll(lists,items)
+        cleanAllOfAll(lists,items) //Ensure all lists are clean to stop crashe
         var input : String
         var num = 0
         var duplicates = false
         lists.logAll()
-        println("Enter ID of the list you want to use:")
+        println("Enter ID of the list you want to use:")    //User selects one of the lists to use
         input = readLine()!!
         if (input.toIntOrNull() != null) {
             num = input.toInt()
         }
         else{
-            println("Please enter a natural number for list ID")
+            println("Please enter a number for list ID")
             enterToContinue()
         }
         var temp : ListModel? = lists.findOne(num)
@@ -529,7 +527,7 @@ class EntityView {
         else{println("Invalid list ID")
         return}
 
-        lists.logOne(list)
+        lists.logOne(list) //Show user their selected list
 
         println("How many items do you want to display:")
         input = readLine()!!
@@ -548,8 +546,8 @@ class EntityView {
         }
 
         //Generate
-        generate(list,duplicates,num, items)
-        //Loop for regenerating
+        generate(list,duplicates,num, items) //Random generate function
+        //Loop for asking user do they want to print more random generations
         while(true){
             println("Would you like to generate another?(y/n)")
             input = readLine()!!
@@ -561,7 +559,7 @@ class EntityView {
             }
         }
     }
-
+    //Function that prints random generated list of items
     fun generate(list: ListModel, duplicates: Boolean, numberOfGens : Int, items: ItemJSONStore) {
         println("Generating " + numberOfGens + " items from " + list.name)
         var itemGenList : ArrayList<ItemModel> = ArrayList()
@@ -570,24 +568,27 @@ class EntityView {
         }
 
         var totalWeight : Float = 0.0F
-        for (item in itemGenList) { totalWeight += item.weight }
+        for (item in itemGenList) { totalWeight += item.weight } //Gets the total combined weight of all items
         var randomNum = 0.0F
         var count = 0.0F
 
         var i = 0
-        var loopBreak = 0
-        var generatedItems : ArrayList<ItemModel> = ArrayList()
-        while(i < numberOfGens){
-            randomNum = Random.nextFloat() * totalWeight
+        var loopBreak = 0//Used to prevent an infinite loop
+        var generatedItems : ArrayList<ItemModel> = ArrayList() //List to keep track of what items have been generated already
+        while(i < numberOfGens){ //loop until the number of items printed has been satisfied
+            randomNum = Random.nextFloat() * totalWeight //Picka random number between 0 and total weight
             count = 0.0F
             var found = false
             for(item in itemGenList){
-                if(generatedItems.contains(item) && !duplicates) {
+                if(generatedItems.contains(item) && !duplicates) {//If duplicates is off and the item is found in the generated list, break
                     break
                 }
                 else if(randomNum >= count && randomNum < count + item.weight){
+                    //Iterate up though each item accumulating their weights
+                    //Loops until the random number is between last iterated item (the first is 0) and current item
                   println("-> " + item.name)
-                  generatedItems.add(item)
+                    if(duplicates)
+                        generatedItems.add(item) //Add the item to the generated list
                   found = true
                   break
                 }
@@ -598,9 +599,9 @@ class EntityView {
             if(found)
                 i++
             else
-                loopBreak++
+                loopBreak++ //If the item was not found (happens when generation amount is > list size and duplicates are off)
 
-            if(loopBreak > 10000){
+            if(loopBreak > 10000){ //If no item is found 10000 times break out of the loop
                 break
             }
         }
@@ -616,18 +617,3 @@ class EntityView {
         return true
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

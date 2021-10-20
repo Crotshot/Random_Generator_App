@@ -28,7 +28,7 @@ class ListJSONStore : ListStore{
 
     init {
         if (exists(JSON_FILE_Lists)) {
-            deserialize()
+            deserialize() //Load data from json file
         }
     }
 
@@ -42,7 +42,7 @@ class ListJSONStore : ListStore{
 
     override fun create(list : ListModel) {
         list.id = generateListRandomId()
-        lists.add(list)
+        lists.add(list)//Add a list to the Item List Array List
         logAll()
         serialize()
     }
@@ -61,7 +61,7 @@ class ListJSONStore : ListStore{
 
     override fun delete(list : ListModel) {
         var loclist = findOne(list.id)
-        if (loclist != null) {
+        if (loclist != null) {//If the list is not null, delete it
             lists.remove(loclist)
         }
     }
@@ -69,7 +69,7 @@ class ListJSONStore : ListStore{
     internal fun logAll() {
         lists.forEach { logger.info("$it") }
     }
-
+    //Log and list and return true if successfully executed
     internal fun logOne(list : ListModel?): Boolean{
         if(list != null)
             lists.forEach {
@@ -80,18 +80,18 @@ class ListJSONStore : ListStore{
             }
         return false;
     }
-
+    //Save to json file
     private fun serialize() {
         val jsonString = gsonBuilder_Lists.toJson(lists, listType_Lists)
         write(JSON_FILE_Lists, jsonString)
     }
-
+    //Load from json file
     private fun deserialize() {
         val jsonString = read(JSON_FILE_Lists)
         lists = Gson().fromJson(jsonString, listType_Lists)
     }
-
-    fun deleteAll(lists: ListJSONStore) {
+    //Delete all lists and save
+    override fun deleteAll(lists: ListJSONStore) {
         lists.lists.clear()
         serialize()
     }

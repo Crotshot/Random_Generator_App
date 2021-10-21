@@ -217,9 +217,17 @@ class EntityView {
     fun cleanAllLists(lists : ListJSONStore, item : ItemModel){        //-> Removes a single item from all lists
         //Called when items are deleted
         println("Cleaning all lists, of removed item")
+        val removeArray : ArrayList<Int> = ArrayList()
         for(list in lists.lists){
             for(id in list.items){
                 if(item.id == id){
+                    removeArray.add(id)
+                }
+            }
+        }
+        for(list in lists.lists){
+            for(id in removeArray){
+                if(list.items.contains(id)){
                     list.items.remove(id)
                 }
             }
